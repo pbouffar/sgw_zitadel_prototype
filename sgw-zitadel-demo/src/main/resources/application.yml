@@ -1,0 +1,54 @@
+server:
+  port: 8090 # Or any port you prefer
+  servlet:
+    context-path: /
+  error:
+    include-stacktrace: never
+
+spring:
+  security:
+    oauth2:
+      # OAuth2 Resource Server Configuration
+      resourceserver:
+        # USED TO LOCALLY VALIDATE ACCESS TOKENS IN JWT FORMAT.
+        jwt:
+          # This is the URL of your OAuth 2.0 Authorization Server.
+          # Spring Security will use this to discover the JWKS endpoint
+          # (e.g., from /.well-known/openid-configuration or /.well-known/oauth-authorization-server)
+          # to fetch public keys for JWT validation.
+          # REPLACE WITH YOUR ACTUAL AUTHORIZATION SERVER ISSUER URI
+          issuer-uri: http://localhost:8080 # Example: Keycloak, Okta, Zitadel, or Spring Authorization Server
+
+        # USED TO VALIDATE OPAQUE ACCESS TOKENS USING ZITADEL'S INTROSPECTION API.
+        # Your Resource Server acts as a client to the Authorization Server's introspection endpoint. 
+        # You'll need to register your Resource Server as a confidential client with the Authorization Server 
+        # and provide the client-id and client-secret credentials.
+        opaquetoken:
+          # This is the URL of your OAuth 2.0 Authorization Server's introspection endpoint.
+          # REPLACE WITH YOUR ACTUAL AUTHORIZATION SERVER INTROSPECTION URI
+          introspection-uri: http://localhost:8080/oauth/v2/introspect
+          # The client ID and secret for your Resource Server to authenticate with the Authorization Server's introspection endpoint.
+          # You will use these for basic authentication (e.g., in an Authorization: Basic header) when making requests to Zitadel's endpoints.
+          client-id: 330021887407138650 # REPLACE WITH YOUR RESOURCE SERVER'S CLIENT ID. i.e. the SGW_Northbound_API application Client Id.
+          client-secret: bKmiAWt6ZiBmcvD7eBGd5d1tPj5eYot6dGRho0zvRT7O0EmpXb6PqyXDaVfQIZ8N # REPLACE WITH YOUR RESOURCE SERVER'S CLIENT SECRET          
+           
+      # OAuth2 Client Configuration
+      client:
+        registration:
+          # Define a unique registration ID for this client
+          so-mock-client:
+            provider: zitadel-server # Link to the provider definition below
+            client-id: sgw_user # Client ID registered on your Authorization Server for this app
+            client-secret: 1h5yVwe0fWmzJNMCmfnMhvPs7MBccZ8FyqPjiEFW8bhB2KJ3adMVf7mB8PASnIya # Client Secret registered on your Authorization Server for this app
+            authorization-grant-type: client_credentials # This is the grant type for service-to-service
+            scope: # Scopes your client needs to request from the AS to access the downstream API
+              - openid
+              - profile
+        provider:
+          # Define the Authorization Server details
+          zitadel-server:
+            issuer-uri: http://localhost:8080 # The base URL of your Authorization Server
+            # Alternatively, you can explicitly define endpoints if issuer-uri discovery fails or is not supported
+            # authorization-uri: http://localhost:8080/oauth2/authorize
+            # token-uri: http://localhost:8080/oauth2/token
+            # jwk-set-uri: http://localhost:8080/oauth2/jwks

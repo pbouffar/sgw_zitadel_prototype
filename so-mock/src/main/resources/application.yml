@@ -1,0 +1,34 @@
+server:
+  port: 8100 # Or any port you prefer
+  servlet:
+    context-path: /
+  error:
+    include-stacktrace: never
+
+spring:
+  security:
+    oauth2:
+      resourceserver:
+
+        # USED TO LOCALLY VALIDATE ACCESS TOKENS IN JWT FORMAT.
+        jwt:
+          # This is the URL of your OAuth 2.0 Authorization Server.
+          # Spring Security will use this to discover the JWKS endpoint
+          # (e.g., from /.well-known/openid-configuration or /.well-known/oauth-authorization-server)
+          # to fetch public keys for JWT validation.
+          # REPLACE WITH YOUR ACTUAL AUTHORIZATION SERVER ISSUER URI
+          issuer-uri: http://localhost:8080 # Zitadel (Authorization Server)
+
+        # USED TO VALIDATE OPAQUE ACCESS TOKENS USING ZITADEL'S INTROSPECTION API.
+        # Your Resource Server acts as a client to the Authorization Server's introspection endpoint. 
+        # You'll need to register your Resource Server as a confidential client with the Authorization Server 
+        # and provide the client-id and client-secret credentials.
+        opaquetoken:
+          # This is the URL of your OAuth 2.0 Authorization Server's introspection endpoint.
+          # REPLACE WITH YOUR ACTUAL AUTHORIZATION SERVER INTROSPECTION URI
+          introspection-uri: http://localhost:8080/oauth/v2/introspect
+          # The client ID and secret for your Resource Server to authenticate with the Authorization Server's introspection endpoint.
+          # You will use these for basic authentication (e.g., in an Authorization: Basic header) when making requests to Zitadel's endpoints.
+          client-id: 330150061545727834 # REPLACE WITH YOUR RESOURCE SERVER'S CLIENT ID. i.e. the SGW_Northbound_API application Client Id.
+          client-secret: 3ccY8fRZakwezzz7hPgkohibKQ82PXbI0qdockNgXsbcTCvmFrORQp8s7MM1Dxa2 # REPLACE WITH YOUR RESOURCE SERVER'S CLIENT SECRET          
+           
