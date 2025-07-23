@@ -26,4 +26,8 @@ All scripts behave as follow with minor differences in the way access tokens are
 # Zitadel (Authorization Server)
 
 Zitadel provides the Authorization Server functionalities required to support the OAuth 2.0 flows.
+
+# Test Setup
+
+![Test-Setup](./documentation/test_setup.PNG)
  
