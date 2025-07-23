@@ -1,3 +1,12 @@
+- [sgw-zitadel-demo (a.k.a SGW Mock)](#sgw-zitadel-demo-aka-sgw-mock)
+- [so-mock (a.k.a SO Mock)](#so-mock-aka-so-mock)
+- [client\_scripts (a.k.a Client Application)](#client_scripts-aka-client-application)
+- [Zitadel (Authorization Server)](#zitadel-authorization-server)
+  - [Install Zitadel on linux](#install-zitadel-on-linux)
+  - [Run Zitadel](#run-zitadel)
+- [Test Setup](#test-setup)
+
+
 # sgw-zitadel-demo (a.k.a SGW Mock)
 
 This details the development of a **Spring Boot 3.5.3 REST API** (sgw-zitadel-demo) designed to act as a **OAuth 2.0 Resource Server** capable of validating both **JWT (JSON Web Tokens)** and **opaque access tokens** simultaneously. It is designed to help test a client application's accessing the SGW's northbound API, acting as a OAuth 2.0 Resource Server, using the OAuth v2 framework with a Authorization Server (Zitadel) for user authentication. 
