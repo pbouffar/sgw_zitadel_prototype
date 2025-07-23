@@ -9,7 +9,10 @@
   - [Install Zitadel on linux](#install-zitadel-on-linux)
   - [Run Zitadel](#run-zitadel)
   - [Configure service user for the Client Application in Zitadel](#configure-service-user-for-the-client-application-in-zitadel)
-- [Test Setup](#test-setup)
+- [Testing](#testing)
+  - [Test Setup](#test-setup)
+  - [Test Strategy](#test-strategy)
+    - [How to test SGW access to southbound API](#how-to-test-sgw-access-to-southbound-api)
 
 
 # sgw-zitadel-demo (a.k.a SGW Mock)
@@ -167,7 +170,27 @@ Note: On first login, Zitadel will ask you to change your password. Don’t forg
 4. Make sure to copy in particular the ClientSecret when you reach the step **Generate Client Secret**. You won't be able to retrieve it again. If you lose it, you will have to generate a new one.
 
 
-# Test Setup
+# Testing 
+
+## Test Setup
 
 ![Test-Setup](./documentation/test_setup.PNG)
  
+## Test Strategy
+
+### How to test SGW access to southbound API
+
+1. Set up SO Mock (the Downstream Resource Server): You'll need another Spring Boot application (or any API) running on http://localhost:8100  that is also configured as an OAuth 2.0 Resource Server and protects its /secured endpoint.
+2. Configure Authorization Server (Zitadel):
+- Ensure Zitadel (your Authorization Server) is running on http://localhost:8080.
+- Register a new client application with Zitadel for the SGW app (the one acting as a client). This new client should use the Client Credentials grant type and have the client-id (my-client-app-id) and client-secret (my-client-app-secret) you configured.
+- Ensure this client is authorized for the scopes (openid, profil) that the downstream API expects.
+3. Run Both Applications: Start your SGW application and the SO Mock resource server.
+4. Trigger the Call: Access http://localhost:8090/call-downstream in your browser or via curl.
+
+SGW will then:
+
+1. Request an access token from Zitadel http://localhost:8080 using its my-client-app-id and my-client-app-secret.
+2. Receive the access token.
+3. Make an HTTP GET request to http://localhost:8100/secured, attaching the obtained access token in the Authorization: Bearer header.
+4. Return the response from the downstream API.
