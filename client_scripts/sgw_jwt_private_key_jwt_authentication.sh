@@ -3,16 +3,6 @@
 SGW_ZITADEL_DEMO_SERVER="http://localhost:8090"
 ZITADEL_SERVER="http://localhost:8080"
 
-# Wellknown wendpoints:
-# /oauth/v2/authorize
-# /oauth/v2/device_authorization
-# /oauth/v2/token
-# /oauth/v2/introspect
-# /oidc/v1/userinfo
-# /oauth/v2/revoke
-# /oidc/v1/end_session
-# /oauth/v2/keys
-
 # --- Configuration (Replace with your actual values) ---
 service_user_id="329282488167868250" # sgw_client_app
 
