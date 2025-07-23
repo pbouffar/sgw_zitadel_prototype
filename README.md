@@ -1,9 +1,14 @@
 - [sgw-zitadel-demo (a.k.a SGW Mock)](#sgw-zitadel-demo-aka-sgw-mock)
+  - [Build and Run SGW Mock](#build-and-run-sgw-mock)
+  - [application.yml](#applicationyml)
+  - [SecurityConfig.java](#securityconfigjava)
+  - [DemoController.java](#democontrollerjava)
 - [so-mock (a.k.a SO Mock)](#so-mock-aka-so-mock)
 - [client\_scripts (a.k.a Client Application)](#client_scripts-aka-client-application)
 - [Zitadel (Authorization Server)](#zitadel-authorization-server)
   - [Install Zitadel on linux](#install-zitadel-on-linux)
   - [Run Zitadel](#run-zitadel)
+  - [Configure service user for the Client Application in Zitadel](#configure-service-user-for-the-client-application-in-zitadel)
 - [Test Setup](#test-setup)
 
 
@@ -14,6 +19,33 @@ This details the development of a **Spring Boot 3.5.3 REST API** (sgw-zitadel-de
 The application is capable of basic JWT local validation and token introspection for opaque tokens. A central challenge was enabling simultaneous support for both token types within a single application, which was ultimately achieved through the implementation of a custom `HybridTokenAuthenticationProvider`.
 
 The application was extended to act as an **OAuth 2.0 Client**, demonstrating how to obtain access tokens via the **Client Credentials Grant** and use Spring's `WebClient` with `OAuth2AuthorizedClientManager` to securely call a downstream REST API (so-mock). This involved adding the `spring-boot-starter-oauth2-client` and `spring-boot-starter-webflux` dependencies and configuring the client registration.
+
+## Build and Run SGW Mock
+
+```
+mvn clean install
+mvn spring-boot:run 
+```
+
+## application.yml
+
+This file will configure your application as an OAuth 2.0 Resource Server. 
+
+The file specifies the `issuer-uri` which is the base URL of your OAuth 2.0 Authorization Server, which issues the JWTs. Spring Security will use this URI to discover the JWKS (JSON Web Key Set) endpoint and validate the incoming JWTs. http://localhost:8080 is the actual `issuer-uri` of your Zitadel Authorization Server. 
+
+The file also specifies the `introspection-uri` and credentials to perform opaque access token validation via the Authorization Server’s introspection API.
+
+## SecurityConfig.java
+
+Defines the security filter chain for your application. This class will enable OAuth 2.0 Resource Server capabilities.
+
+This configuration supports local validation of JWT access token and Zitadel’s introspection endpoint for opaque token (but also JWT token validation). The configuration specifies .authenticationProvider(hybridTokenAuthenticationProvider) which provides the mechanism to support both token validation methods. This tells Spring Security to treat the application as an OAuth 2.0 Resource Server that validates JSON Web Tokens (JWTs) or opaque token (through introspection). 
+
+When using JWTs, the resource server validates the access token locally by verifying its signature using public keys obtained from the Authorization Server's JWKS (JSON Web Key Set) endpoint (which is discovered via the issuer-uri configured in application.yml). It also checks claims like expiration, issuer, and audience.
+
+## DemoController.java
+
+A simple REST controller with endpoints to test the OAuth 2.0 authentication.
 
 # so-mock (a.k.a SO Mock)
 
@@ -123,6 +155,16 @@ Use the following credentials:
 - password: Password1!
 
 Note: On first login, Zitadel will ask you to change your password. Don’t forget it.
+
+## Configure service user for the Client Application in Zitadel
+
+1. Login to Zitadel via http://localhost:8080/ui/console.
+
+2. Follow the instructions at https://zitadel.com/docs/guides/integrate/service-users/client-credentials#1-create-a-service-user-with-a-client-secret  .
+
+3. In the **SERVICE USER DETAILS**, select **Access Token Type** to be JWT. This will ensure we get a Jason Web Token (JWT) as an access token for the user. Choosing *Bearer* will return an opaque token as an access token.
+
+4. Make sure to copy in particular the ClientSecret when you reach the step **Generate Client Secret**. You won't be able to retrieve it again. If you lose it, you will have to generate a new one.
 
 
 # Test Setup
