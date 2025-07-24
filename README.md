@@ -343,8 +343,6 @@ Follow these steps to create an application:
 
 #### Update SGW Mock and SO Mock application.yml
 
-**>>> MOVE THIS SECTION UNDER THE SPRING BOOT APPLICATION SECTION. <<<**
-
 Update the `sgw-zitadel-demo` application's `application.yml` file `client-id` and `client-secret` fields (as shown below) with the `SGW_Northbound_API`'s **ClientId** and **ClientSecret** saved earlier when the Application was created in Zitadel.
 
 Similarly, update the `so-mock` application's `application.yml` file `client-id` and `client-secret` fields (as shown below) with the `SO Mock API`'s **ClientId** and **ClientSecret** saved earlier when the Application was created in Zitadel.
