@@ -4,6 +4,8 @@
   - [SecurityConfig.java](#securityconfigjava)
   - [DemoController.java](#democontrollerjava)
 - [so-mock (a.k.a SO Mock)](#so-mock-aka-so-mock)
+  - [Build and Run SO Mock](#build-and-run-so-mock)
+  - [application.yml](#applicationyml-1)
 - [client\_scripts (a.k.a Client Application)](#client_scripts-aka-client-application)
 - [Zitadel (Authorization Server)](#zitadel-authorization-server)
   - [Install Zitadel on linux](#install-zitadel-on-linux)
@@ -38,11 +40,30 @@ mvn spring-boot:run
 
 ## application.yml
 
-This file will configure your application as an OAuth 2.0 Resource Server. 
+The `application.yml` file configures the Spring Boot application's behavior, primarily focusing on its roles as an OAuth 2.0 Resource Server and an OAuth 2.0 Client:
 
-The file specifies the `issuer-uri` which is the base URL of your OAuth 2.0 Authorization Server, which issues the JWTs. Spring Security will use this URI to discover the JWKS (JSON Web Key Set) endpoint and validate the incoming JWTs. http://localhost:8080 is the actual `issuer-uri` of your Zitadel Authorization Server. 
+*   **`server.port`**: Specifies the port number on which the Spring Boot application's web server will listen for incoming HTTP requests (e.g., `8090`).
 
-The file also specifies the `introspection-uri` and credentials to perform opaque access token validation via the Authorization Server’s introspection API.
+*   **`spring.security.oauth2.resourceserver.jwt.issuer-uri`**: Defines the base URL of the OAuth 2.0 Authorization Server (Zitadel) that issues JWTs (JSON Web Tokens). Spring Security uses this URI to discover the Authorization Server's public keys (via JWKS endpoint) for local validation of incoming JWTs. `http://localhost:8080` is the actual `issuer-uri` of the Zitadel Authorization Server.
+
+*   **`spring.security.oauth2.resourceserver.opaquetoken.introspection-uri`**: Specifies the URL of the OAuth 2.0 Authorization Server's (Zitadel) introspection endpoint (RFC 7662). This is where the application sends opaque (non-JWT) access tokens to determine their active status and retrieve associated claims.
+
+*   **`spring.security.oauth2.resourceserver.opaquetoken.client-id`**: The client ID used by this Resource Server application (SGW Mock) to authenticate itself when making requests to the Authorization Server's (Zitadel) introspection endpoint.
+
+*   **`spring.security.oauth2.resourceserver.opaquetoken.client-secret`**: The client secret used by this Resource Server application (SGW Mock) to authenticate itself when making requests to the Authorization Server's (Zitadel) introspection endpoint.
+
+*   **`spring.security.oauth2.client.registration.so-mock-client.provider`**: Links this client registration to a defined OAuth 2.0 provider configuration (e.g., `so-mock-client`), specifying which Authorization Server (Zitadel) to use for obtaining tokens.
+
+*   **`spring.security.oauth2.client.registration.so-mock-client.client-id`**: The client ID of this application, as registered with the Authorization Server (Zitadel), used when SGW Mock acts as an OAuth 2.0 client to request access tokens for downstream APIs (i.e SO Mock APIs).
+
+*   **`spring.security.oauth2.client.registration.so-mock-client.client-secret`**: The client secret of this application, as registered with the Authorization Server (Zitadel), used when it acts as an OAuth 2.0 client to request access tokens.
+
+*   **`spring.security.oauth2.client.registration.so-mock-client.authorization-grant-type`**: Specifies the OAuth 2.0 grant type this client will use to obtain tokens; for service-to-service communication, this is typically `client_credentials`.
+
+*   **`spring.security.oauth2.client.registration.so-mock-client.scope`**: A list of requested permissions or scopes that this client application needs to obtain in its access token to successfully call protected resources on another (downstream) API (i.e SO Mock APIs).
+
+*   **`spring.security.oauth2.client.provider.my-auth-server.issuer-uri`**: The base URL of the Authorization Server (Zitadel) that provides OAuth 2.0 services (like token issuance and introspection) for the SO Mock application when it acts as an OAuth 2.0 client.  
+ 
 
 ## SecurityConfig.java
 
@@ -62,11 +83,33 @@ This details the development of a **Spring Boot 3.5.3 REST API** (so-mock) desig
 
 Just like SGW Mock, this application is capable of basic JWT local validation and token introspection for opaque tokens. A central challenge was enabling simultaneous support for both token types within a single application, which was ultimately achieved through the implementation of a custom `HybridTokenAuthenticationProvider`.
 
+## Build and Run SO Mock
+
+```
+mvn clean install
+mvn spring-boot:run 
+```
+
+## application.yml
+
+The `application.yml` file configures the Spring Boot application's behavior, primarily focusing on its roles as an OAuth 2.0 Resource Server:
+
+*   **`server.port`**: Specifies the port number on which the Spring Boot application's web server will listen for incoming HTTP requests (e.g., `8100`).
+
+*   **`spring.security.oauth2.resourceserver.jwt.issuer-uri`**: Defines the base URL of the OAuth 2.0 Authorization Server (Zitadel) that issues JWTs (JSON Web Tokens). Spring Security uses this URI to discover the Authorization Server's public keys (via JWKS endpoint) for local validation of incoming JWTs. `http://localhost:8080` is the actual `issuer-uri` of the Zitadel Authorization Server.
+
+*   **`spring.security.oauth2.resourceserver.opaquetoken.introspection-uri`**: Specifies the URL of the OAuth 2.0 Authorization Server's (Zitadel) introspection endpoint (RFC 7662). This is where the application sends opaque (non-JWT) access tokens to determine their active status and retrieve associated claims.
+
+*   **`spring.security.oauth2.resourceserver.opaquetoken.client-id`**: The client ID used by this Resource Server application (SO Mock) to authenticate itself when making requests to the Authorization Server's (Zitadel) introspection endpoint.
+
+*   **`spring.security.oauth2.resourceserver.opaquetoken.client-secret`**: The client secret used by this Resource Server application (SO Mock) to authenticate itself when making requests to the Authorization Server's (Zitadel) introspection endpoint.
+
+
 # client_scripts (a.k.a Client Application)
 
 These bash script automate a process of obtaining an OAuth 2.0 access token and then using it to access protected resources, as well as demonstrating access to public resources.
 
-All scripts behave as follow with minor differences in the way access tokens are obtained and verified:
+All scripts behave almost the same with minor differences in the way access tokens are obtained and validated:
 
 1. It sends a POST request to the ZITADEL server's /oauth/v2/token endpoint to obtain an access token.
 2. It parses the JSON response from the token endpoint to extract the access_token.
@@ -198,7 +241,7 @@ The following two Applications need to be created :
 
 When creating an Application, it is important to take note of the following information for each: **client-id** and **client-secret**. This information needs to be saved to the `application.yml` file of each Sprint Boot application, i.e. `sgw-zitadel-demo` and `so-mock`.
 
-Follow these steps to create both application:
+Follow these steps to create an application:
 
 1. In Zitadel, select the `SGW_Project_Cisco` project in the **Projects** tab.
 2. Select **APPLICATIONS** > **New**.  
@@ -212,6 +255,8 @@ Follow these steps to create both application:
 10. Click **Close**.
 
 #### Update SGW Mock and SO Mock application.yml
+
+**>>> MOVE THIS SECTION UNDER THE SPRING BOOT APPLICATION SECTION. <<<**
 
 Update the `sgw-zitadel-demo` application's `application.yml` file `client-id` and `client-secret` fields (as shown below) with the `SGW_Northbound_API`'s **ClientId** and **ClientSecret** saved earlier when the Application was created in Zitadel.
 
@@ -227,6 +272,8 @@ Similarly, update the `so-mock` application's `application.yml` file `client-id`
 This configuration is what allows a Spring Boot application to authenticate with Zitadel and access its API to perform, for example, token introspection.
 
 ### Create Service Users in Zitadel
+
+Follow these steps to create a service user In Zitadel.
 
 1. In Zitadel, select the **Service Users** project in the **Users** tab.
 2. Click the **New** button.
