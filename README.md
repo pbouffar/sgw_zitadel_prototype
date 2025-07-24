@@ -12,7 +12,7 @@
     - [Create an Organization in Zitadel](#create-an-organization-in-zitadel)
     - [Create a Project in Zitadel](#create-a-project-in-zitadel)
     - [Create Applications in Zitadel](#create-applications-in-zitadel)
-    - [Update SGW Mock and SO Mock application.yml](#update-sgw-mock-and-so-mock-applicationyml)
+      - [Update SGW Mock and SO Mock application.yml](#update-sgw-mock-and-so-mock-applicationyml)
     - [Create Service Users in Zitadel](#create-service-users-in-zitadel)
     - [Configure service user for the Client Application in Zitadel](#configure-service-user-for-the-client-application-in-zitadel)
 - [Testing](#testing)
@@ -169,15 +169,28 @@ Note: On first login, Zitadel will ask you to change your password. Don’t forg
 
 ### Create an Organization in Zitadel
 
-This step consist of creating the `Cisco` organisation.
+This step consist of creating the `Cisco` organisation in Zitadel.
+
+1. In Zitadel, at the top-left of the page, click on the `up/down` arrows on the left of the `Zitadel` organisation.
+2. Select **+ New Organisation**.
+3. Enter the **Name** `Cisco`.
+4. Click **Create**.
+
+Then go back to clicking the up/down arrows on the left of the `Zitadel` organisation and select the `Cisco` organisation.
 
 ### Create a Project in Zitadel
 
-This step consist of creating the `SGW_Project_Cisco` project within the `Cisco` organisation.
+This step consist of creating the `SGW_Project_Cisco` project in the `Cisco` Zitadel organisation.
+
+1. In Zitadel, click on **Create New Project** in the **Projects** tab.
+2. Enter the **Name** `SGW_Project_Cisco`.
+3. Click **Continue**.
+
+You can now proceed to create the Zitadel Applications.
 
 ### Create Applications in Zitadel
 
-This step consist of create two Application within the `SGW_Project_Cisco` project. 
+This step consist of create two Application inside the `SGW_Project_Cisco` Zitadel project. 
 
 The following two Applications need to be created :
 - `SGW_Northbound_API`: This application defines the SGW Mock application's northbound API.
@@ -198,7 +211,7 @@ Follow these steps to create both application:
 9. **Copy and save** the application's **ClientId** and **ClientSecret**. They will be used (see below) to populate the respective `application.yml` file of each application.
 10. Click **Close**.
 
-### Update SGW Mock and SO Mock application.yml
+#### Update SGW Mock and SO Mock application.yml
 
 Update the `sgw-zitadel-demo` application's `application.yml` file `client-id` and `client-secret` fields (as shown below) with the `SGW_Northbound_API`'s **ClientId** and **ClientSecret** saved earlier when the Application was created in Zitadel.
 
