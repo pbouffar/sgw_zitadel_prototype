@@ -13,6 +13,7 @@
     - [Create a Project in Zitadel](#create-a-project-in-zitadel)
     - [Create Applications in Zitadel](#create-applications-in-zitadel)
     - [Update SGW Mock and SO Mock application.yml](#update-sgw-mock-and-so-mock-applicationyml)
+    - [Create Service Users in Zitadel](#create-service-users-in-zitadel)
     - [Configure service user for the Client Application in Zitadel](#configure-service-user-for-the-client-application-in-zitadel)
 - [Testing](#testing)
   - [Test Setup](#test-setup)
@@ -210,7 +211,20 @@ Similarly, update the `so-mock` application's `application.yml` file `client-id`
           client-secret: <ClientSecret>          
 ```
 
-This configuration is what allows a Spring Boot application to authenticate with Zitadel and access its API to, for example, perform token introspection.
+This configuration is what allows a Spring Boot application to authenticate with Zitadel and access its API to perform, for example, token introspection.
+
+### Create Service Users in Zitadel
+
+1. In Zitadel, select the **Service Users** project in the **Users** tab.
+2. Click the **New** button.
+3. In the **CREATE A NEW USER** page, enter the **User Name**, **Name** and **Description**.
+4. Select one of the following **Access Token Type**:
+    - **Bearer**: Uses an opaque access token to authenticate with a resource server's API. The resource server needs to call the authentication server's token introspection endpoint to validate the access token.
+    - **JWT**: Uses an JWT access token to authenticate with a resource server's API. The resource server locally validates the access token.
+5. Click the **Actions** button.
+6. Select **Generate Client Secret**.
+7. Save the service user's **ClientId** and **ClientSecret**.
+8. Click **Close**.
 
 ### Configure service user for the Client Application in Zitadel
 
