@@ -8,7 +8,12 @@
 - [Zitadel (Authorization Server)](#zitadel-authorization-server)
   - [Install Zitadel on linux](#install-zitadel-on-linux)
   - [Run Zitadel](#run-zitadel)
-  - [Configure service user for the Client Application in Zitadel](#configure-service-user-for-the-client-application-in-zitadel)
+  - [Setup in Zitadel](#setup-in-zitadel)
+    - [Create an Organization in Zitadel](#create-an-organization-in-zitadel)
+    - [Create a Project in Zitadel](#create-a-project-in-zitadel)
+    - [Create Applications in Zitadel](#create-applications-in-zitadel)
+    - [Update SGW Mock and SO Mock application.yml](#update-sgw-mock-and-so-mock-applicationyml)
+    - [Configure service user for the Client Application in Zitadel](#configure-service-user-for-the-client-application-in-zitadel)
 - [Testing](#testing)
   - [Test Setup](#test-setup)
   - [Test Strategy](#test-strategy)
@@ -159,7 +164,55 @@ Use the following credentials:
 
 Note: On first login, Zitadel will ask you to change your password. Don’t forget it.
 
-## Configure service user for the Client Application in Zitadel
+## Setup in Zitadel
+
+### Create an Organization in Zitadel
+
+This step consist of creating the `Cisco` organisation.
+
+### Create a Project in Zitadel
+
+This step consist of creating the `SGW_Project_Cisco` project within the `Cisco` organisation.
+
+### Create Applications in Zitadel
+
+This step consist of create two Application within the `SGW_Project_Cisco` project. 
+
+The following two Applications need to be created :
+- `SGW_Northbound_API`: This application defines the SGW Mock application's northbound API.
+- `SO Mock API`: This application defines the SO Mock application's northbound API.
+
+When creating an Application, it is important to take note of the following information for each: **client-id** and **client-secret**. This information needs to be saved to the `application.yml` file of each Sprint Boot application, i.e. `sgw-zitadel-demo` and `so-mock`.
+
+Follow these steps to create both application:
+
+1. In Zitadel, select the `SGW_Project_Cisco` project in the **Projects** tab.
+2. Select **APPLICATIONS** > **New**.  
+3. Enter the **NAME OF THE APPLICATION**. Use the names suggested here above.
+4. Select **API** for the **TYPE OF APPLICATION**.
+5. Click **Continue**.
+6. Select **BASIC** when asked to **Enter Your Application Details Step by Step**.
+7. Click **Continue**.
+8. Click **Create**.
+9. **Copy and save** the application's **ClientId** and **ClientSecret**. They will be used (see below) to populate the respective `application.yml` file of each application.
+10. Click **Close**.
+
+### Update SGW Mock and SO Mock application.yml
+
+Update the `sgw-zitadel-demo` application's `application.yml` file `client-id` and `client-secret` fields (as shown below) with the `SGW_Northbound_API`'s **ClientId** and **ClientSecret** saved earlier when the Application was created in Zitadel.
+
+Similarly, update the `so-mock` application's `application.yml` file `client-id` and `client-secret` fields (as shown below) with the `SO Mock API`'s **ClientId** and **ClientSecret** saved earlier when the Application was created in Zitadel.
+
+```yml
+        opaquetoken:
+          introspection-uri: http://localhost:8080/oauth/v2/introspect
+          client-id: <ClientId>
+          client-secret: <ClientSecret>          
+```
+
+This configuration is what allows a Spring Boot application to authenticate with Zitadel and access its API to, for example, perform token introspection.
+
+### Configure service user for the Client Application in Zitadel
 
 1. Login to Zitadel via http://localhost:8080/ui/console.
 
