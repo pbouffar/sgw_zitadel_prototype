@@ -1,6 +1,8 @@
 - [sgw-zitadel-demo (a.k.a SGW Mock)](#sgw-zitadel-demo-aka-sgw-mock)
   - [Build and Run SGW Mock](#build-and-run-sgw-mock)
   - [application.yml](#applicationyml)
+    - [OAuth 2.0 Resource Server related fields](#oauth-20-resource-server-related-fields)
+    - [OAuth 2.0 Client related fields](#oauth-20-client-related-fields)
   - [SecurityConfig.java](#securityconfigjava)
   - [DemoController.java](#democontrollerjava)
 - [so-mock (a.k.a SO Mock)](#so-mock-aka-so-mock)
@@ -33,7 +35,7 @@ The application was extended to act as an **OAuth 2.0 Client**, demonstrating ho
 
 ## Build and Run SGW Mock
 
-```
+```bash
 mvn clean install
 mvn spring-boot:run 
 ```
@@ -41,6 +43,8 @@ mvn spring-boot:run
 ## application.yml
 
 The `application.yml` file configures the Spring Boot application's behavior, primarily focusing on its roles as an OAuth 2.0 Resource Server and an OAuth 2.0 Client:
+
+### OAuth 2.0 Resource Server related fields
 
 *   **`server.port`**: Specifies the port number on which the Spring Boot application's web server will listen for incoming HTTP requests (e.g., `8090`).
 
@@ -51,6 +55,8 @@ The `application.yml` file configures the Spring Boot application's behavior, pr
 *   **`spring.security.oauth2.resourceserver.opaquetoken.client-id`**: The client ID used by this Resource Server application (SGW Mock) to authenticate itself when making requests to the Authorization Server's (Zitadel) introspection endpoint.
 
 *   **`spring.security.oauth2.resourceserver.opaquetoken.client-secret`**: The client secret used by this Resource Server application (SGW Mock) to authenticate itself when making requests to the Authorization Server's (Zitadel) introspection endpoint.
+
+### OAuth 2.0 Client related fields
 
 *   **`spring.security.oauth2.client.registration.so-mock-client.provider`**: Links this client registration to a defined OAuth 2.0 provider configuration (e.g., `so-mock-client`), specifying which Authorization Server (Zitadel) to use for obtaining tokens.
 
@@ -85,7 +91,7 @@ Just like SGW Mock, this application is capable of basic JWT local validation an
 
 ## Build and Run SO Mock
 
-```
+```bash
 mvn clean install
 mvn spring-boot:run 
 ```
@@ -127,7 +133,7 @@ Reference: https://zitadel.com/docs/self-hosting/deploy/linux
 Note: This installation assumes you already have PostGres installed and running on your system. Hence, I have omitted the directions to install it (recommended by Zitadel).
 
 
-```
+```bash
 ~/code/zitadel_prototype/zitadel_install  LATEST=$(curl -i https://github.com/zitadel/zitadel/releases/latest | grep location: | cut -d '/' -f 8 | tr -d '\r'); ARCH=$(uname -m); case $ARCH in armv5*) ARCH="armv5";; armv6*) ARCH="armv6";; armv7*) ARCH="arm";; aarch64) ARCH="arm64";; x86) ARCH="386";; x86_64) ARCH="amd64";;  i686) ARCH="386";; i386) ARCH="386";; esac; wget -c https://github.com/zitadel/zitadel/releases/download/$LATEST/zitadel-linux-$ARCH.tar.gz -O - | tar -xz && sudo mv zitadel-linux-$ARCH/zitadel /usr/local/bin
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
@@ -154,7 +160,7 @@ Saving to: ‘STDOUT’
 Since you may already have PostGres installed and running, you may need to change the `ZITADEL_DATABASE_POSTGRES_PORT`, `ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME` and `ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD` to match your system.
 
 
-```
+```bash
  ~/code/zitadel_prototype/zitadel_install  ZITADEL_DATABASE_POSTGRES_HOST=localhost ZITADEL_DATABASE_POSTGRES_PORT=5433 ZITADEL_DATABASE_POSTGRES_DATABASE=zitadel ZITADEL_DATABASE_POSTGRES_USER_USERNAME=zitadel ZITADEL_DATABASE_POSTGRES_USER_PASSWORD=zitadel ZITADEL_DATABASE_POSTGRES_USER_SSL_MODE=disable ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME=postgres ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD=admin@123 ZITADEL_DATABASE_POSTGRES_ADMIN_SSL_MODE=disable ZITADEL_EXTERNALSECURE=false zitadel start-from-init --masterkey "MasterkeyNeedsToHave32Characters" --tlsMode disabled
 INFO[0000] initialization started                        caller="/home/runner/work/zitadel/zitadel/cmd/initialise/init.go:70"
 INFO[0000] verify user                                   caller="/home/runner/work/zitadel/zitadel/cmd/initialise/verify_user.go:40" username=zitadel
