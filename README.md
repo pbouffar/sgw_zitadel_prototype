@@ -160,8 +160,20 @@ Saving to: ‘STDOUT’
 Since you may already have PostGres installed and running, you may need to change the `ZITADEL_DATABASE_POSTGRES_PORT`, `ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME` and `ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD` to match your system.
 
 
-```bash
- ~/code/zitadel_prototype/zitadel_install  ZITADEL_DATABASE_POSTGRES_HOST=localhost ZITADEL_DATABASE_POSTGRES_PORT=5433 ZITADEL_DATABASE_POSTGRES_DATABASE=zitadel ZITADEL_DATABASE_POSTGRES_USER_USERNAME=zitadel ZITADEL_DATABASE_POSTGRES_USER_PASSWORD=zitadel ZITADEL_DATABASE_POSTGRES_USER_SSL_MODE=disable ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME=postgres ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD=admin@123 ZITADEL_DATABASE_POSTGRES_ADMIN_SSL_MODE=disable ZITADEL_EXTERNALSECURE=false zitadel start-from-init --masterkey "MasterkeyNeedsToHave32Characters" --tlsMode disabled
+```shell
+ ~/code/zitadel_prototype/zitadel_install \ ZITADEL_DATABASE_POSTGRES_HOST=localhost \
+ ZITADEL_DATABASE_POSTGRES_PORT=5433 \
+ ZITADEL_DATABASE_POSTGRES_DATABASE=zitadel \
+ ZITADEL_DATABASE_POSTGRES_USER_USERNAME=zitadel \
+ ZITADEL_DATABASE_POSTGRES_USER_PASSWORD=zitadel \
+ ZITADEL_DATABASE_POSTGRES_USER_SSL_MODE=disable \
+ ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME=postgres \
+ ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD=admin@123 \
+ ZITADEL_DATABASE_POSTGRES_ADMIN_SSL_MODE=disable \
+ ZITADEL_EXTERNALSECURE=false \
+ zitadel start-from-init \
+ --masterkey "MasterkeyNeedsToHave32Characters" \
+ --tlsMode disabled
 INFO[0000] initialization started                        caller="/home/runner/work/zitadel/zitadel/cmd/initialise/init.go:70"
 INFO[0000] verify user                                   caller="/home/runner/work/zitadel/zitadel/cmd/initialise/verify_user.go:40" username=zitadel
 INFO[0000] verify database                               caller="/home/runner/work/zitadel/zitadel/cmd/initialise/verify_database.go:40" database=zitadel
