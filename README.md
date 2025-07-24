@@ -190,11 +190,19 @@ key_id="329282866460534618"
 
 ### Client Application > SGW Mock API (Client Credentials Auth w/ JWT Access Token)
 
+IMPORTANT: [Update `CLIENT_ID` and `CLIENT_SECRET`](#update-client_id-and-client_secret)
+
+Go to [file](client_scripts/sgw_jwt_client_credentials_authentication.sh).
+
 ```shell
 ./sgw_jwt_client_credentials_authentication.sh
 ```
 
 ### Client Application > SGW Mock API (Client Credentials Auth w/ Opaque Access Token)
+
+IMPORTANT: [Update `CLIENT_ID` and `CLIENT_SECRET`](#update-client_id-and-client_secret)
+
+Go to [file](client_scripts/sgw_opaque_client_credentials_authentication.sh).
 
 ```shell
 ./sgw_opaque_client_credentials_authentication.sh
@@ -202,17 +210,29 @@ key_id="329282866460534618"
 
 ### Client Application > SGW Mock API (Private Key JWT Auth w/ JWT Access Token)
 
+IMPORTANT: [Update `service_user_id`, `private_key` and `key_id`](#update-service_user_id-private_key-and-key_id)
+
+Go to [file](client_scripts/sgw_jwt_private_key_jwt_authentication.sh).
+
 ```shell
 ./sgw_jwt_private_key_jwt_authentication.sh
 ```
 
 ### Client Application > SGW Mock API (Private Key JWT Auth w/ Opaque Access Token)
 
+IMPORTANT: [Update `service_user_id`, `private_key` and `key_id`](#update-service_user_id-private_key-and-key_id)
+
+Go to [file](client_scripts/sgw_opaque_private_key_jwt_authentication.sh).
+
 ```shell
 ./sgw_opaque_private_key_jwt_authentication.sh
 ```
 
 ### Client Application > SGW Mock API > SO Mock API
+
+IMPORTANT: [Update `CLIENT_ID` and `CLIENT_SECRET`](#update-client_id-and-client_secret)
+
+Go to [file](client_scripts/sgw_sb_access_jwt_client_credentials_authentication.sh).
 
 ```shell
 ./sgw_sb_access_jwt_client_credentials_authentication.sh
