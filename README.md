@@ -21,7 +21,7 @@
     - [Create Applications in Zitadel](#create-applications-in-zitadel)
       - [Update SGW Mock and SO Mock application.yml](#update-sgw-mock-and-so-mock-applicationyml)
     - [Create Service Users in Zitadel](#create-service-users-in-zitadel)
-    - [Add Key to Service User](#add-key-to-service-user)
+    - [Add Key to Service User for Private Key JWT Authentication](#add-key-to-service-user-for-private-key-jwt-authentication)
 - [Testing](#testing)
   - [Test Setup](#test-setup)
   - [Test Strategies](#test-strategies)
@@ -148,7 +148,7 @@ CLIENT_SECRET="bhwbF4APgAclItV1Idi8YxyKDTYJKO0WHDulXsEWqlnvajDpHMyYe3sGoQ1S84hP"
 
 Some scripts require that you update the bash script variables `service_user_id`, `private_key` and `key_id` with your own values obtained from Zitadel when you created a service user and added a key of type `JSON`. 
 
-Go to section [Add Key to Service User](#add-key-to-service-user) to learn how to add a key to an existing service user.
+Go to section [Add Key to Service User for Private Key JWT Authentication](#add-key-to-service-user-for-private-key-jwt-authentication) to learn how to add a key to an existing service user.
 
 Populate these variables with the service user's JSON Key file (downloaded when adding a JSON key to the service user), specifically the values of the JSON keys **userId**, **key** and **keyId**. 
 
@@ -375,7 +375,7 @@ Follow these steps to create a service user In Zitadel.
 
 For reference:  https://zitadel.com/docs/guides/integrate/service-users/client-credentials#1-create-a-service-user-with-a-client-secret
 
-### Add Key to Service User
+### Add Key to Service User for Private Key JWT Authentication
 
 1. In Zitadel, select the **Users** tab.
 2. Select **Service Users**.
