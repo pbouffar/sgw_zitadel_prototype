@@ -161,7 +161,8 @@ Since you may already have PostGres installed and running, you may need to chang
 
 
 ```shell
- ~/code/zitadel_prototype/zitadel_install \ ZITADEL_DATABASE_POSTGRES_HOST=localhost \
+ ~/code/zitadel_prototype/zitadel_install \
+ ZITADEL_DATABASE_POSTGRES_HOST=localhost \
  ZITADEL_DATABASE_POSTGRES_PORT=5433 \
  ZITADEL_DATABASE_POSTGRES_DATABASE=zitadel \
  ZITADEL_DATABASE_POSTGRES_USER_USERNAME=zitadel \
