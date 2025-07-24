@@ -12,12 +12,6 @@
   - [Before you execute a client script](#before-you-execute-a-client-script)
     - [Update `CLIENT_ID` and `CLIENT_SECRET`](#update-client_id-and-client_secret)
     - [Update `service_user_id`, `private_key` and `key_id`](#update-service_user_id-private_key-and-key_id)
-  - [Execute client script](#execute-client-script)
-    - [Client Application \> SGW Mock API (Client Credentials Auth w/ JWT Access Token)](#client-application--sgw-mock-api-client-credentials-auth-w-jwt-access-token)
-    - [Client Application \> SGW Mock API (Client Credentials Auth w/ Opaque Access Token)](#client-application--sgw-mock-api-client-credentials-auth-w-opaque-access-token)
-    - [Client Application \> SGW Mock API (Private Key JWT Auth w/ JWT Access Token)](#client-application--sgw-mock-api-private-key-jwt-auth-w-jwt-access-token)
-    - [Client Application \> SGW Mock API (Private Key JWT Auth w/ Opaque Access Token)](#client-application--sgw-mock-api-private-key-jwt-auth-w-opaque-access-token)
-    - [Client Application \> SGW Mock API \> SO Mock API](#client-application--sgw-mock-api--so-mock-api)
 - [Zitadel (Authorization Server)](#zitadel-authorization-server)
   - [Install Zitadel on linux](#install-zitadel-on-linux)
   - [Run Zitadel](#run-zitadel)
@@ -30,8 +24,14 @@
     - [Add Key to Service User](#add-key-to-service-user)
 - [Testing](#testing)
   - [Test Setup](#test-setup)
-  - [Test Strategy](#test-strategy)
-    - [How to test SGW access to southbound API](#how-to-test-sgw-access-to-southbound-api)
+  - [Test Strategies](#test-strategies)
+    - [How to test SGW Mock access to southbound API (i.e. SO Mock API)](#how-to-test-sgw-mock-access-to-southbound-api-ie-so-mock-api)
+  - [Test Scenarios](#test-scenarios)
+    - [Client Application \> SGW Mock API (Client Credentials Auth w/ JWT Access Token)](#client-application--sgw-mock-api-client-credentials-auth-w-jwt-access-token)
+    - [Client Application \> SGW Mock API (Client Credentials Auth w/ Opaque Access Token)](#client-application--sgw-mock-api-client-credentials-auth-w-opaque-access-token)
+    - [Client Application \> SGW Mock API (Private Key JWT Auth w/ JWT Access Token)](#client-application--sgw-mock-api-private-key-jwt-auth-w-jwt-access-token)
+    - [Client Application \> SGW Mock API (Private Key JWT Auth w/ Opaque Access Token)](#client-application--sgw-mock-api-private-key-jwt-auth-w-opaque-access-token)
+    - [Client Application \> SGW Mock API \> SO Mock API](#client-application--sgw-mock-api--so-mock-api)
 
 
 # sgw-zitadel-demo (a.k.a SGW Mock)
@@ -184,58 +184,6 @@ PlJvCQKBgCl9chLCeuw9fF3yQITNNVnDM0yXaz5n0MPCuaciCLHI2G1fENzz/S3f
 DId1QwLyIkXZGEC9IZIEHWsfb+4QKI3HRH517sTrELM6Z3Xzmnij
 -----END RSA PRIVATE KEY-----"
 key_id="329282866460534618"
-```
-
-## Execute client script
-
-### Client Application > SGW Mock API (Client Credentials Auth w/ JWT Access Token)
-
-IMPORTANT: [Update `CLIENT_ID` and `CLIENT_SECRET`](#update-client_id-and-client_secret)
-
-Go to [file](client_scripts/sgw_jwt_client_credentials_authentication.sh).
-
-```shell
-./sgw_jwt_client_credentials_authentication.sh
-```
-
-### Client Application > SGW Mock API (Client Credentials Auth w/ Opaque Access Token)
-
-IMPORTANT: [Update `CLIENT_ID` and `CLIENT_SECRET`](#update-client_id-and-client_secret)
-
-Go to [file](client_scripts/sgw_opaque_client_credentials_authentication.sh).
-
-```shell
-./sgw_opaque_client_credentials_authentication.sh
-```
-
-### Client Application > SGW Mock API (Private Key JWT Auth w/ JWT Access Token)
-
-IMPORTANT: [Update `service_user_id`, `private_key` and `key_id`](#update-service_user_id-private_key-and-key_id)
-
-Go to [file](client_scripts/sgw_jwt_private_key_jwt_authentication.sh).
-
-```shell
-./sgw_jwt_private_key_jwt_authentication.sh
-```
-
-### Client Application > SGW Mock API (Private Key JWT Auth w/ Opaque Access Token)
-
-IMPORTANT: [Update `service_user_id`, `private_key` and `key_id`](#update-service_user_id-private_key-and-key_id)
-
-Go to [file](client_scripts/sgw_opaque_private_key_jwt_authentication.sh).
-
-```shell
-./sgw_opaque_private_key_jwt_authentication.sh
-```
-
-### Client Application > SGW Mock API > SO Mock API
-
-IMPORTANT: [Update `CLIENT_ID` and `CLIENT_SECRET`](#update-client_id-and-client_secret)
-
-Go to [file](client_scripts/sgw_sb_access_jwt_client_credentials_authentication.sh).
-
-```shell
-./sgw_sb_access_jwt_client_credentials_authentication.sh
 ```
 
 # Zitadel (Authorization Server)
@@ -446,9 +394,11 @@ For reference:  https://zitadel.com/docs/guides/integrate/service-users/client-c
 
 ![Test-Setup](./documentation/test_setup.PNG)
  
-## Test Strategy
+## Test Strategies
 
-### How to test SGW access to southbound API
+### How to test SGW Mock access to southbound API (i.e. SO Mock API)
+
+This sequence describes the sequence of events when the [sgw_sb_access_jwt_client_credentials_authentication.sh](client_scripts/sgw_sb_access_jwt_client_credentials_authentication.sh) client application script is executed. 
 
 1. Set up SO Mock (the Downstream Resource Server): You'll need another Spring Boot application (or any API) running on http://localhost:8100  that is also configured as an OAuth 2.0 Resource Server and protects its /secured endpoint.
 2. Configure Authorization Server (Zitadel):
@@ -458,9 +408,63 @@ For reference:  https://zitadel.com/docs/guides/integrate/service-users/client-c
 3. Run Both Applications: Start your SGW application and the SO Mock resource server.
 4. Trigger the Call: Access http://localhost:8090/call-downstream in your browser or via curl.
 
-SGW will then:
+SGW Mock will then:
 
 1. Request an access token from Zitadel http://localhost:8080 using its my-client-app-id and my-client-app-secret.
 2. Receive the access token.
 3. Make an HTTP GET request to http://localhost:8100/secured, attaching the obtained access token in the Authorization: Bearer header.
 4. Return the response from the downstream API.
+
+## Test Scenarios
+
+### Client Application > SGW Mock API (Client Credentials Auth w/ JWT Access Token)
+
+IMPORTANT: [Update `CLIENT_ID` and `CLIENT_SECRET`](#update-client_id-and-client_secret)
+
+Go to [file](client_scripts/sgw_jwt_client_credentials_authentication.sh).
+
+```shell
+./sgw_jwt_client_credentials_authentication.sh
+```
+
+### Client Application > SGW Mock API (Client Credentials Auth w/ Opaque Access Token)
+
+IMPORTANT: [Update `CLIENT_ID` and `CLIENT_SECRET`](#update-client_id-and-client_secret)
+
+Go to [file](client_scripts/sgw_opaque_client_credentials_authentication.sh).
+
+```shell
+./sgw_opaque_client_credentials_authentication.sh
+```
+
+### Client Application > SGW Mock API (Private Key JWT Auth w/ JWT Access Token)
+
+IMPORTANT: [Update `service_user_id`, `private_key` and `key_id`](#update-service_user_id-private_key-and-key_id)
+
+Go to [file](client_scripts/sgw_jwt_private_key_jwt_authentication.sh).
+
+```shell
+./sgw_jwt_private_key_jwt_authentication.sh
+```
+
+### Client Application > SGW Mock API (Private Key JWT Auth w/ Opaque Access Token)
+
+IMPORTANT: [Update `service_user_id`, `private_key` and `key_id`](#update-service_user_id-private_key-and-key_id)
+
+Go to [file](client_scripts/sgw_opaque_private_key_jwt_authentication.sh).
+
+```shell
+./sgw_opaque_private_key_jwt_authentication.sh
+```
+
+### Client Application > SGW Mock API > SO Mock API
+
+IMPORTANT: [Update `CLIENT_ID` and `CLIENT_SECRET`](#update-client_id-and-client_secret)
+
+Go to [file](client_scripts/sgw_sb_access_jwt_client_credentials_authentication.sh).
+
+```shell
+./sgw_sb_access_jwt_client_credentials_authentication.sh
+```
+
+Please refer to this test [strategy](#how-to-test-sgw-mock-access-to-southbound-api-ie-so-mock-api) for an overview of this test.
