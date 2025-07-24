@@ -400,19 +400,19 @@ For reference:  https://zitadel.com/docs/guides/integrate/service-users/client-c
 
 This sequence describes the sequence of events when the [sgw_sb_access_jwt_client_credentials_authentication.sh](client_scripts/sgw_sb_access_jwt_client_credentials_authentication.sh) client application script is executed. 
 
-1. Set up SO Mock (the Downstream Resource Server): You'll need another Spring Boot application (or any API) running on http://localhost:8100  that is also configured as an OAuth 2.0 Resource Server and protects its /secured endpoint.
+1. Set up SO Mock (the Downstream Resource Server): You'll need another Spring Boot application (or any API) running on `http://localhost:8100`  that is also configured as an OAuth 2.0 Resource Server and protects its `/secured` endpoint.
 2. Configure Authorization Server (Zitadel):
-- Ensure Zitadel (your Authorization Server) is running on http://localhost:8080.
-- Register a new client application with Zitadel for the SGW app (the one acting as a client). This new client should use the Client Credentials grant type and have the client-id (my-client-app-id) and client-secret (my-client-app-secret) you configured.
-- Ensure this client is authorized for the scopes (openid, profil) that the downstream API expects.
-3. Run Both Applications: Start your SGW application and the SO Mock resource server.
-4. Trigger the Call: Access http://localhost:8090/call-downstream in your browser or via curl.
+- Ensure Zitadel (your Authorization Server) is running on `http://localhost:8080`.
+- Register a new client application with Zitadel for the SGW Mock application (the one acting as a client of the Downstream Resource Server i.e. SO Mock). This new client should use the Client Credentials grant type and have the client-id (my-client-app-id) and client-secret (my-client-app-secret) you configured.
+- Ensure this client is authorized for the scopes (`openid`, `profil`) that the downstream API expects.
+3. Run both applications: Start your SGW Mock application and the SO Mock resource server application.
+4. Trigger the call: Access the SGW Mock endpoint at `http://localhost:8090/call-downstream` in your browser or via curl.
 
 SGW Mock will then:
 
-1. Request an access token from Zitadel http://localhost:8080 using its my-client-app-id and my-client-app-secret.
+1. Request an access token from Zitadel `http://localhost:8080` using its my-client-app-id and my-client-app-secret.
 2. Receive the access token.
-3. Make an HTTP GET request to http://localhost:8100/secured, attaching the obtained access token in the Authorization: Bearer header.
+3. Make an HTTP GET request to `http://localhost:8100/secured`, attaching the obtained access token in the Authorization: Bearer header.
 4. Return the response from the downstream API.
 
 ## Test Scenarios
