@@ -9,6 +9,15 @@
   - [Build and Run SO Mock](#build-and-run-so-mock)
   - [application.yml](#applicationyml-1)
 - [client\_scripts (a.k.a Client Application)](#client_scripts-aka-client-application)
+  - [Before you execute a client script](#before-you-execute-a-client-script)
+    - [Update `CLIENT_ID` and `CLIENT_SECRET`](#update-client_id-and-client_secret)
+    - [Update `service_user_id`, `private_key` and `key_id`](#update-service_user_id-private_key-and-key_id)
+  - [Execute client script](#execute-client-script)
+    - [Client Application \> SGW Mock API (Client Credentials Auth w/ JWT Access Token)](#client-application--sgw-mock-api-client-credentials-auth-w-jwt-access-token)
+    - [Client Application \> SGW Mock API (Client Credentials Auth w/ Opaque Access Token)](#client-application--sgw-mock-api-client-credentials-auth-w-opaque-access-token)
+    - [Client Application \> SGW Mock API (Private Key JWT Auth w/ JWT Access Token)](#client-application--sgw-mock-api-private-key-jwt-auth-w-jwt-access-token)
+    - [Client Application \> SGW Mock API (Private Key JWT Auth w/ Opaque Access Token)](#client-application--sgw-mock-api-private-key-jwt-auth-w-opaque-access-token)
+    - [Client Application \> SGW Mock API \> SO Mock API](#client-application--sgw-mock-api--so-mock-api)
 - [Zitadel (Authorization Server)](#zitadel-authorization-server)
   - [Install Zitadel on linux](#install-zitadel-on-linux)
   - [Run Zitadel](#run-zitadel)
@@ -18,7 +27,7 @@
     - [Create Applications in Zitadel](#create-applications-in-zitadel)
       - [Update SGW Mock and SO Mock application.yml](#update-sgw-mock-and-so-mock-applicationyml)
     - [Create Service Users in Zitadel](#create-service-users-in-zitadel)
-    - [Configure service user for the Client Application in Zitadel](#configure-service-user-for-the-client-application-in-zitadel)
+    - [Add Key to Service User](#add-key-to-service-user)
 - [Testing](#testing)
   - [Test Setup](#test-setup)
   - [Test Strategy](#test-strategy)
@@ -115,12 +124,99 @@ The `application.yml` file configures the Spring Boot application's behavior, pr
 
 These bash script automate a process of obtaining an OAuth 2.0 access token and then using it to access protected resources, as well as demonstrating access to public resources.
 
-All scripts behave almost the same with minor differences in the way access tokens are obtained and validated:
+All scripts, except `sgw_sb_access_jwt_client_credentials_authentication.sh`, behave similarly (as listed here below) with minor differences in the method of authentication with Zitadel and how access tokens are obtained and validated.
 
 1. It sends a POST request to the ZITADEL server's /oauth/v2/token endpoint to obtain an access token.
 2. It parses the JSON response from the token endpoint to extract the access_token.
 3. It then makes a GET request to the /secured endpoint of the SGW Mock endpoint. Authentication is required to access this endpoint.
 4. Finally, it makes another GET request to the /public/hello endpoint on the SGW Mock endpoint. No authentication is required.
+
+## Before you execute a client script
+
+### Update `CLIENT_ID` and `CLIENT_SECRET`
+
+Some scripts require that you update the bash script variables `CLIENT_ID` and `CLIENT_SECRET` with your own values obtained from Zitadel when you created a service user. 
+
+Populate these variables with the **ClientId** and **ClientSecret** saved after executing the step **Generate Client Secret** of section [Configure service user for the Client Application in Zitadel](#configure-service-user-for-the-client-application-in-zitadel). 
+
+```shell
+CLIENT_ID="sgw_client_app"
+CLIENT_SECRET="bhwbF4APgAclItV1Idi8YxyKDTYJKO0WHDulXsEWqlnvajDpHMyYe3sGoQ1S84hP"
+```
+
+### Update `service_user_id`, `private_key` and `key_id`
+
+Some scripts require that you update the bash script variables `service_user_id`, `private_key` and `key_id` with your own values obtained from Zitadel when you created a service user and added a key of type `JSON`. 
+
+Go to section [Add Key to Service User](#add-key-to-service-user) to learn how to add a key to an existing service user.
+
+Populate these variables with the service user's JSON Key file (downloaded when adding a JSON key to the service user), specifically the values of the JSON keys **userId**, **key** and **keyId**. 
+
+**IMPORTANT**: The `private_key` value must be formatted to match the following example.
+
+```shell
+service_user_id="329282488167868250"
+private_key="-----BEGIN RSA PRIVATE KEY-----
+MIIEowIBAAKCAQEApL+VDKU+UGpsIj2go33uJ/+U1IOIE2fjS8RLs1Q/EvzL5+Wj
+Y3ruansDKNm6nA6oNmsJTJXckDYZLnc1Rc2EOb1eiiyhL166p9aDd4oxZV9BsRfu
+lPAgff5rKx8c5xdarTSGbFyQ3lsdXPsfc/DGmj3RdaCnZBWlCDeSAy5AZrFZZxFZ
+Zl6UGzThLEVOEiaK3k+LX0+jzWR3yjdsoFdCq8dI/gG3/NLlQU/wXF83WB5CPRHg
+MqC1V+xYdTdfNALbe8IzvlAeVu+ULWExyg3ZYoC6JRSIV2PTIy0Lopi9J36VYCk/
+a1+0JGTvuvRGf0DzDn7pwth8KEkbHdFAoWV6LQIDAQABAoIBAANgqlw6gmG2O/SG
+pUITDF5Mj/K8iZq1lH0ZyG5rKbD96JVmBgUhJ8ucSa8g4rqWOTq/fnl6pi15KD0e
+W4r3F/ZHTlhF3ExWma3V/jN0COfGT5EVEluCVzyjX2U1wrJS2RV0iSqJrbypSzgY
+n3kRbXjvD6EBWSDBcRFyx/1I0L5qNE+tMCQOa9eI7c61rgUfbjPYn4iPe5DTBU9B
+zhdn5VG+iLsqEzUX6H+N3cUV/NKltK9mekCCsgsUgIL6xMWgYRzduSUi4K1K9ngb
+UBEZKBPoRNLkzK1NQ8WgoLm72eVrkvBy4UR1w2eAYRBQU3eaQ7UV+2GCCTUPWTEV
+sYplRXECgYEAz4cD8QqmVZex+gSsU+rJK/JtDKjoVkaoDRmqCPYeDd0BbVX8ulMg
+/W09aQ8DpTOH/wR0MZJkCvFqVWO1NViF0rJ3IMkDvqF8Rd97yPYUWmMJYVcKnQva
+bEiOl0Wam2kUQ6PBv3zKV6wd0imr8yq+wdBiqjJz4Rhe9WmtxZhacDUCgYEAyzqe
+T0yXpqW+qiBhh/fF6RaugLskf2Beq8b7PQKqCDJaeiayPXK8g/na6pP+6ns90xAL
+SxYPEMItMo55sJqrGOnc7ypC/9QWuKOn1bZjnBLS4onhDs9SSCVjzIVcMqDTO8ns
+k5DmUg59TyoGY/ZXiflbIUV/joAl7RjK8cBJERkCgYAWvtaYwbEPaovwOjjlDbO0
+5GI9Y/nrEt1yaiCv0MHkhReV8zm69keEX0e+zw14OtiqA8P0dvYOGP2tlDsVOLma
+KUNTTZTifPKQ+fioQwhiC77Ic3DPW7A59A3k2JUkeXTmIPmoUjYfO9cc5MJa6ZF0
+zrExtEvtHO2zejy4joVDDQKBgQCD6aGWYWXSIqVWsjv8UISi3jkYj+CJ2Vi58Sdk
+m5UYSu7VeMabAh2BIK3LM5L0Slh/5lseOsw+mXtS5I3yZwKF4k6o4uqoOdchtACd
+xIx1YvaFWu+9eC61a6eSukF1D1Ts6w1nX1dQjd0ihGmvetepVDSlrQG10lJLypr4
+PlJvCQKBgCl9chLCeuw9fF3yQITNNVnDM0yXaz5n0MPCuaciCLHI2G1fENzz/S3f
+5Re6i4aO4EnltCv0HSjxsFubvEkVBN8T+OQQE7SdMHpZgOD46NgZAkI2Uhip+dPK
+DId1QwLyIkXZGEC9IZIEHWsfb+4QKI3HRH517sTrELM6Z3Xzmnij
+-----END RSA PRIVATE KEY-----"
+key_id="329282866460534618"
+```
+
+## Execute client script
+
+### Client Application > SGW Mock API (Client Credentials Auth w/ JWT Access Token)
+
+```shell
+./sgw_jwt_client_credentials_authentication.sh
+```
+
+### Client Application > SGW Mock API (Client Credentials Auth w/ Opaque Access Token)
+
+```shell
+./sgw_opaque_client_credentials_authentication.sh
+```
+
+### Client Application > SGW Mock API (Private Key JWT Auth w/ JWT Access Token)
+
+```shell
+./sgw_jwt_private_key_jwt_authentication.sh
+```
+
+### Client Application > SGW Mock API (Private Key JWT Auth w/ Opaque Access Token)
+
+```shell
+./sgw_opaque_private_key_jwt_authentication.sh
+```
+
+### Client Application > SGW Mock API > SO Mock API
+
+```shell
+./sgw_sb_access_jwt_client_credentials_authentication.sh
+```
 
 # Zitadel (Authorization Server)
 
@@ -128,13 +224,19 @@ Zitadel provides the Authorization Server functionalities required to support th
 
 ## Install Zitadel on linux
 
-Reference: https://zitadel.com/docs/self-hosting/deploy/linux 
-
 Note: This installation assumes you already have PostGres installed and running on your system. Hence, I have omitted the directions to install it (recommended by Zitadel).
 
+Reference: https://zitadel.com/docs/self-hosting/deploy/linux 
 
-```bash
-~/code/zitadel_prototype/zitadel_install  LATEST=$(curl -i https://github.com/zitadel/zitadel/releases/latest | grep location: | cut -d '/' -f 8 | tr -d '\r'); ARCH=$(uname -m); case $ARCH in armv5*) ARCH="armv5";; armv6*) ARCH="armv6";; armv7*) ARCH="arm";; aarch64) ARCH="arm64";; x86) ARCH="386";; x86_64) ARCH="amd64";;  i686) ARCH="386";; i386) ARCH="386";; esac; wget -c https://github.com/zitadel/zitadel/releases/download/$LATEST/zitadel-linux-$ARCH.tar.gz -O - | tar -xz && sudo mv zitadel-linux-$ARCH/zitadel /usr/local/bin
+command:
+```shell
+~/code/zitadel_prototype/zitadel_install \
+LATEST=$(curl -i https://github.com/zitadel/zitadel/releases/latest | grep location: | cut -d '/' -f 8 | tr -d '\r'); ARCH=$(uname -m); case $ARCH in armv5*) ARCH="armv5";; armv6*) ARCH="armv6";; armv7*) ARCH="arm";; aarch64) ARCH="arm64";; x86) ARCH="386";; x86_64) ARCH="amd64";;  i686) ARCH="386";; i386) ARCH="386";; esac; wget -c https://github.com/zitadel/zitadel/releases/download/$LATEST/zitadel-linux-$ARCH.tar.gz -O - | tar -xz && sudo mv zitadel-linux-$ARCH/zitadel /usr/local/bin
+```
+
+output:
+```shell
+
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
   0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
@@ -159,7 +261,12 @@ Saving to: ‘STDOUT’
 
 Since you may already have PostGres installed and running, you may need to change the `ZITADEL_DATABASE_POSTGRES_PORT`, `ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME` and `ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD` to match your system.
 
+For instance, on some systems the following values are typically used:
+- `ZITADEL_DATABASE_POSTGRES_PORT`: 5433
+- `ZITADEL_DATABASE_POSTGRES_ADMIN_USERNAME`: postgres
+- `ZITADEL_DATABASE_POSTGRES_ADMIN_PASSWORD`: admin@123
 
+command:
 ```shell
  ~/code/zitadel_prototype/zitadel_install \
  ZITADEL_DATABASE_POSTGRES_HOST=localhost \
@@ -175,17 +282,12 @@ Since you may already have PostGres installed and running, you may need to chang
  zitadel start-from-init \
  --masterkey "MasterkeyNeedsToHave32Characters" \
  --tlsMode disabled
-INFO[0000] initialization started                        caller="/home/runner/work/zitadel/zitadel/cmd/initialise/init.go:70"
-INFO[0000] verify user                                   caller="/home/runner/work/zitadel/zitadel/cmd/initialise/verify_user.go:40" username=zitadel
-INFO[0000] verify database                               caller="/home/runner/work/zitadel/zitadel/cmd/initialise/verify_database.go:40" database=zitadel
-INFO[0000] verify grant                                  caller="/home/runner/work/zitadel/zitadel/cmd/initialise/verify_grant.go:35" database=zitadel user=zitadel
-INFO[0000] verify zitadel                                caller="/home/runner/work/zitadel/zitadel/cmd/initialise/verify_zitadel.go:80" database=zitadel
-INFO[0000] verify system                                 caller="/home/runner/work/zitadel/zitadel/cmd/initialise/verify_zitadel.go:46"
-INFO[0000] verify encryption keys                        caller="/home/runner/work/zitadel/zitadel/cmd/initialise/verify_zitadel.go:51"
+ ```
+
+ output:
+ ```shell
 ...
-# OUTPUT OMITTED
-...
-INFO[0002] setup completed                               caller="/home/runner/work/zitadel/zitadel/cmd/setup/setup.go:117"
+# NOTE: THE PREVIOUS LINES OF OUTPUT WERE INTENTIONNALLY TRUNCATED.
   _____  ___   _____      _      ____    _____   _
  |__  / |_ _| |_   _|    / \    |  _ \  | ____| | |
    / /   | |    | |     / _ \   | | | | |  _|   | |
@@ -216,14 +318,12 @@ INFO[0002] server is listening on [::]:8080              caller="/home/runner/wo
 ```
 
 Then visit:
-
-- Console URL      	: http://localhost:8080/ui/console
-- Health Check URL 	: http://localhost:8080/debug/healthz
+- Zitadel WebConsole URL: http://localhost:8080/ui/console
+- Zitadel Health Check URL: http://localhost:8080/debug/healthz
 
 Use the following credentials:
-
-- username: zitadel-admin@zitadel.localhost
-- password: Password1!
+- username: `zitadel-admin@zitadel.localhost`
+- password: `Password1!`
 
 Note: On first login, Zitadel will ask you to change your password. Don’t forget it.
 
@@ -305,15 +405,19 @@ Follow these steps to create a service user In Zitadel.
 7. Save the service user's **ClientId** and **ClientSecret**.
 8. Click **Close**.
 
-### Configure service user for the Client Application in Zitadel
+For reference:  https://zitadel.com/docs/guides/integrate/service-users/client-credentials#1-create-a-service-user-with-a-client-secret
 
-1. Login to Zitadel via http://localhost:8080/ui/console.
+### Add Key to Service User
 
-2. Follow the instructions at https://zitadel.com/docs/guides/integrate/service-users/client-credentials#1-create-a-service-user-with-a-client-secret  .
-
-3. In the **SERVICE USER DETAILS**, select **Access Token Type** to be JWT. This will ensure we get a Jason Web Token (JWT) as an access token for the user. Choosing *Bearer* will return an opaque token as an access token.
-
-4. Make sure to copy in particular the ClientSecret when you reach the step **Generate Client Secret**. You won't be able to retrieve it again. If you lose it, you will have to generate a new one.
+1. In Zitadel, select the **Users** tab.
+2. Select **Service Users**.
+3. Click the desired service user name (in the column **DISPLAY NAME**).
+4. On the left-side menu, select **Keys**.
+5. Click the **+ New** button. 
+6. Select **Type** `JSON` and leave the expiration date empty.
+7. Click **Add**.
+8. **Download** and save the JSON file for later use.
+9. Click **Close**.
 
 
 # Testing 
