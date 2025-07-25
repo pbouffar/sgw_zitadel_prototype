@@ -402,7 +402,8 @@ For reference:  https://zitadel.com/docs/guides/integrate/service-users/client-c
    * Run the application.
 5. Update the client scripts with service user credentials and keys.
 
-You are ready to execute any of the scripts below.
+You are ready to execute any of the scripts below, or execute the `run.py` script. 
+If you run the `run.py` script, make sure to update the `config.py` file.
 
 ## Test Scenarios
 
