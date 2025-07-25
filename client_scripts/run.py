@@ -202,6 +202,47 @@ def oauth_flow_opaque_access_token_with_private_key_jwt_authentication():
         return # Exit if token acquisition or secured access fails
     
 
+def oauth_flow_sgw_southbound_api_access():
+
+    # Request an access token using client credentials grant
+    token_data = {
+        'grant_type': 'client_credentials',
+        'scope': 'openid profile'
+    }
+    # Use basic authentication for client_id and client_secret
+    auth = (config.CLIENT_ID, config.CLIENT_SECRET)
+
+    print("\nAccessing a secured endpoint....")
+    try:
+        print("Requesting JWT access token...")
+    
+        response = requests.post(config.TOKEN_URL, data=token_data, auth=auth)
+        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx or 5xx)
+        token_response_json = response.json()
+        access_token = token_response_json.get('access_token')
+
+        if access_token:
+            print("Access token obtained successfully.")
+            # print(json.dumps(token_response_json, indent=2)) # Uncomment to see full token response
+
+            # Access a secured endpoint using the obtained access token
+            headers = {
+                "Authorization": f"Bearer {access_token}"
+            }
+            secured_response = requests.get(config.DOWNSTREAM_API, headers=headers)
+            secured_response.raise_for_status()
+            print(f"Secured endpoint response: {secured_response.text}")
+
+        else:
+            print("Failed to obtain access token. 'access_token' not found in response.")
+            print(f"Full token response: {response.text}")
+
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred during token request: {e}")
+        if hasattr(e, 'response') and e.response is not None:
+            print(f"Response content: {e.response.text}")
+
+
 def access_public_api():
 
     # Access a public endpoint
@@ -224,5 +265,7 @@ if __name__ == "__main__":
     oauth_flow_opaque_access_token_with_client_credentials_authentication()
     print("--------------------------------------------------------")
     oauth_flow_opaque_access_token_with_private_key_jwt_authentication()
+    print("--------------------------------------------------------")
+    oauth_flow_sgw_southbound_api_access()
     print("--------------------------------------------------------")
     access_public_api()        

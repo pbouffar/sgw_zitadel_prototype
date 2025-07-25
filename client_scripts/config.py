@@ -7,6 +7,7 @@ TOKEN_URL = f"{ZITADEL_SERVER}/oauth/v2/token"
 
 PUBLIC_API = f"{SGW_ZITADEL_DEMO_SERVER}/public/hello"
 SECURED_API = f"{SGW_ZITADEL_DEMO_SERVER}/secured"
+DOWNSTREAM_API = f"{SGW_ZITADEL_DEMO_SERVER}/call-downstream"
 
 PROJECT_ID="330021820281431898" # SGW_Project_Cisco. The Zitadel project's Resource ID.
 
