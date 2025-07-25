@@ -423,6 +423,12 @@ Go to [file](client_scripts/sgw_jwt_client_credentials_authentication.sh).
 
 ```shell
 ./sgw_jwt_client_credentials_authentication.sh
+
+Accessing a secured endpoint....
+Hello, 329282488167868250! (Authenticated via JWT). Your scopes: null
+
+Accessing a public endpoint....
+Hello from a public endpoint!
 ```
 
 ### Client Application > SGW Mock API (Client Credentials Auth w/ Opaque Access Token)
@@ -433,6 +439,12 @@ Go to [file](client_scripts/sgw_opaque_client_credentials_authentication.sh).
 
 ```shell
 ./sgw_opaque_client_credentials_authentication.sh
+
+Accessing a secured endpoint....
+Hello, 330022031053596506! (Authenticated via Introspection). All attributes: {active=true, scope=[openid, profile, urn:zitadel:iam:org:project:id:330021820281431898:aud], client_id=sgw_pierre, token_type=Bearer, exp=2025-07-26T02:05:48Z, iat=2025-07-25T14:05:48Z, auth_time=1753452348, nbf=2025-07-25T14:05:48Z, sub=330022031053596506, aud=[330021820281431898], amr=[pwd], iss=http://localhost:8080, jti=V2_330437919967913818-at_330437919967979354, username=sgw_pierre, name=sgw_pierre, updated_at=1753204472, preferred_username=sgw_pierre}
+
+Accessing a public endpoint....
+Hello from a public endpoint!
 ```
 
 ### Client Application > SGW Mock API (Private Key JWT Auth w/ JWT Access Token)
@@ -443,6 +455,13 @@ Go to [file](client_scripts/sgw_jwt_private_key_jwt_authentication.sh).
 
 ```shell
 ./sgw_jwt_private_key_jwt_authentication.sh
+
+Generating encoded JWT...
+
+Accessing a secured endpoint....
+Hello, 329282488167868250! (Authenticated via JWT). Your scopes: null
+Accessing a public endpoint....
+Hello from a public endpoint!
 ```
 
 ### Client Application > SGW Mock API (Private Key JWT Auth w/ Opaque Access Token)
@@ -453,6 +472,13 @@ Go to [file](client_scripts/sgw_opaque_private_key_jwt_authentication.sh).
 
 ```shell
 ./sgw_opaque_private_key_jwt_authentication.sh
+
+Generating encoded JWT...
+
+Accessing a secured endpoint....
+Hello, 330022031053596506! (Authenticated via Introspection). All attributes: {active=true, scope=[openid, urn:zitadel:iam:org:project:id:330021820281431898:aud], client_id=sgw_pierre, token_type=Bearer, exp=2025-07-26T02:05:54Z, iat=2025-07-25T14:05:54Z, auth_time=1753452354, nbf=2025-07-25T14:05:54Z, sub=330022031053596506, aud=[330021820281431898], iss=http://localhost:8080, jti=V2_330437930436896602-at_330437930436962138}
+Accessing a public endpoint....
+Hello from a public endpoint!
 ```
 
 ### Client Application > SGW Mock API > SO Mock API
@@ -463,6 +489,9 @@ Go to [file](client_scripts/sgw_sb_access_jwt_client_credentials_authentication.
 
 ```shell
 ./sgw_sb_access_jwt_client_credentials_authentication.sh
+
+Accessing a SO Mock API endpoint....
+Successfully called downstream SO Mock API: Hello from SO Mock, 330153788604196698! (Authenticated via JWT). Your scopes: null
 ```
 
 Please refer to this test [strategy](#how-to-test-sgw-mock-access-to-southbound-api-ie-so-mock-api) for an overview of this test.
