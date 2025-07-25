@@ -391,6 +391,19 @@ For reference:  https://zitadel.com/docs/guides/integrate/service-users/client-c
 
 ![Test-Setup](./documentation/test_setup.PNG)
 
+1. Start Zitadel.
+2. Setup configurations in Zitadel.
+   * Create Organisation, Project, Applications and Service Users.
+3. Setup SGW Mock application.
+   * Update the application.yml file.
+   * Run the application.
+4. Setup SO Mock application.
+   * Update the application.yml file.
+   * Run the application.
+5. Update the client scripts with service user credentials and keys.
+
+You are ready to execute any of the scripts below.
+
 ## Test Scenarios
 
 ### Client Application > SGW Mock API (Client Credentials Auth w/ JWT Access Token)
