@@ -17,10 +17,8 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.server.resource.introspection.OpaqueTokenIntrospector;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.reactive.function.client.WebClient; // Import WebClient
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 import java.util.Collections; // For Collections.singletonList
 import java.util.stream.Collectors; // For logging 
@@ -30,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(jsr250Enabled = true) // This is critical. It enables Spring Security to recognize and process JSR-250 annotations like @PermitAll, @RolesAllowed, and @DenyAll.
 public class SecurityConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);

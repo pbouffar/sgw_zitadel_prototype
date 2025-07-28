@@ -246,7 +246,7 @@ def oauth_flow_sgw_southbound_api_access():
 def access_public_api():
 
     # Access a public endpoint
-    print("\nAccessing a public endpoint....")
+    print(f"\nAccessing a public endpoint: {config.PUBLIC_API}")
     try:
         public_response = requests.get(config.PUBLIC_API)
         public_response.raise_for_status()
