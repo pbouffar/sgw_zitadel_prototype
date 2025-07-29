@@ -1,6 +1,7 @@
 package com.cisco.sgw_zitadel_demo;
 
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.introspection.OAuth2IntrospectionAuthenticatedPrincipal;
 import org.springframework.security.core.Authentication;
@@ -10,6 +11,7 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.ext.Provider;
 import jakarta.annotation.security.PermitAll; // For public endpoints
 
 import org.slf4j.Logger;
@@ -17,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component; // Mark as Spring component
 
 @Component
+@Provider
 @Path("/") // Base path for the resource
 public class DemoController {
 
@@ -59,9 +62,12 @@ public class DemoController {
             Jwt jwt = (Jwt) principal;
             message = "Hello, " + jwt.getSubject() + "! (Authenticated via JWT). Your scopes: " + jwt.getClaims().get("scope");
         } else if (principal instanceof OAuth2IntrospectionAuthenticatedPrincipal) {
-            // If introspection was successful, the principal will be an OAuth2IntrospectionAuthenticatedPrincipal
+            // If introspection was successful, the principal will be an OAuth2IntrospectionAuthenticatedPrincipal.
             OAuth2IntrospectionAuthenticatedPrincipal opaquePrincipal = (OAuth2IntrospectionAuthenticatedPrincipal) principal;
             message = "Hello, " + opaquePrincipal.getName() + "! (Authenticated via Introspection). All attributes: " + opaquePrincipal.getAttributes();
+        } else if (principal instanceof User) {
+            User user = (User) principal;
+            message = "Hello, " + user.getUsername() + "! (Authenticated via X.509). All authorities: " + user.getAuthorities();
         } else {
             if (principal == null) {
                 logger.error("principal is null!");

@@ -31,6 +31,7 @@
     - [Client Application \> SGW Mock API (Private Key JWT Auth w/ Opaque Access Token)](#client-application--sgw-mock-api-private-key-jwt-auth-w-opaque-access-token)
     - [Client Application \> SGW Mock API \> SO Mock API](#client-application--sgw-mock-api--so-mock-api)
       - [Description](#description)
+    - [Client Application \> SGW Mock API: Using X.509 Authentication.](#client-application--sgw-mock-api-using-x509-authentication)
 
 
 # sgw-zitadel-demo (a.k.a SGW Mock)
@@ -506,3 +507,34 @@ SGW Mock will then:
 2. Receive the access token.
 3. Make an HTTP GET request to `http://localhost:8100/secured`, attaching the obtained access token in the Authorization: Bearer header.
 4. Return the response from the downstream API.
+
+
+### Client Application > SGW Mock API: Using X.509 Authentication.
+
+Run this script (only once) from the ./tools directory.
+```
+cd tools
+./setup_x509.sh
+```
+
+Build and run SGW Mock with the following values in the `application.properties`.
+```
+server.port=8443
+server.ssl.enabled=true
+server.ssl.key-store=classpath:certs/server.p12
+server.ssl.key-store-password=changeit
+server.ssl.key-store-type=PKCS12
+server.ssl.key-alias=springboot
+server.ssl.trust-store=classpath:certs/truststore.jks
+server.ssl.trust-store-password=changeit
+server.ssl.trust-store-type=JKS
+server.ssl.client-auth=need
+```
+
+Run the test script from the `./client_scripts` folder.
+```shell
+cd ./client_scripts
+
+./sgw_client_x509.sh
+Hello, testuser! (Authenticated via X.509). All authorities: [ROLE_USER]   
+```

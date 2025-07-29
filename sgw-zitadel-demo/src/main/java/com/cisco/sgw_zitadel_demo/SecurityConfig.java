@@ -17,8 +17,15 @@ import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
-import org.springframework.web.reactive.function.client.WebClient; // Import WebClient
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+//import org.springframework.security.core.authority.AuthorityUtils;
+
+// X.509 specific imports
+import org.springframework.security.core.userdetails.User;
+//import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Collections; // For Collections.singletonList
 import java.util.stream.Collectors; // For logging 
@@ -77,6 +84,14 @@ public class SecurityConfig {
                 .requestMatchers("/public/**").permitAll() // Allow public access to /public endpoints
                 .anyRequest().authenticated() // All other requests require authentication
             )
+            // Add X.509 authentication support
+            .x509(x509 -> x509
+                // Extract Common Name (CN) from the certificate's subject DN as the username
+                .subjectPrincipalRegex("CN=(.*?)(?:,.*|$)")
+                //.subjectPrincipalRegex("CN=(.*?),")
+                // Provide a UserDetailsService to load user details based on the extracted username
+                .userDetailsService(userDetailsService())
+            )
             // Configure oauth2ResourceServer to use your custom AuthenticationManagerResolver.
             // DO NOT call .jwt() or .opaqueToken() here, as the resolver takes precedence.
             .oauth2ResourceServer(oauth2 -> oauth2.authenticationManagerResolver(bearerTokenAuthenticationManagerResolver()))
@@ -85,6 +100,45 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Configures a UserDetailsService for X.509 authentication.
+     * This service is responsible for loading user details based on the username extracted
+     * from the X.509 certificate's subject DN (in this case, the Common Name).
+     *
+     * In a real-world application, you would typically look up the user in your
+     * database, LDAP, or another identity store using the extracted username (CN).
+     *
+     * @return A UserDetailsService implementation.
+     */
+    @Bean
+    public UserDetailsService userDetailsService() {
+        return username -> {
+            logger.info("Attempting to load user by username (from X.509 CN): {}", username);
+            // Example: In a real application, you would look up the user in your database
+            // or directory service based on the 'username' (which is the CN from the certificate).
+            // For this example, we'll create a dummy user based on a hardcoded username.
+            if ("testuser".equals(username)) { // Replace with actual user lookup logic
+                return User.withUsername(username)
+                    .password("") // X.509 authentication doesn't use passwords
+                    .roles("USER") // Assign appropriate roles for the user
+                    .build();
+            } else if ("adminuser".equals(username)) {
+                return User.withUsername(username)
+                    .password("")
+                    .roles("ADMIN", "USER")
+                    .build();
+            }
+            /* // TODO: This is the original SGW code. 
+            } else if(username.equals(clientCNName)) {
+                return new User(username, "", AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_ADMIN"));
+
+            }
+            */
+            logger.warn("User '{}' not found for X.509 authentication.", username);
+            throw new UsernameNotFoundException("User not found: " + username);
+        };
+    }
+    
     // --- OAuth2 Client Configuration Beans ---
 
     // Provides a WebClient.Builder for creating WebClient instances
