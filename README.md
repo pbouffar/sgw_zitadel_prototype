@@ -405,6 +405,7 @@ For reference:  https://zitadel.com/docs/guides/integrate/service-users/client-c
 
 You are ready to execute any of the scripts below, or execute the `run.py` script. 
 If you run the `run.py` script, make sure to update the `config.py` file.
+**Note**: When SSL is enabled in SGW Mock, you can execute `run.py` by setting `SSL_ENABLED=True` in `config.py`.
 
 ## Test Scenarios
 
@@ -511,7 +512,9 @@ SGW Mock will then:
 
 ### Client Application > SGW Mock API: Using X.509 Authentication.
 
-Run this script (only once) from the `tools` directory.
+To execute this test, SSL needs to be enabled in the SOCK Mock application (sgw-zitadel-demo).
+
+First, run this script (only once) from the `tools` directory to create all the required server and client certificates.
 ```
 cd tools
 ./setup_x509.sh
@@ -521,7 +524,7 @@ Build and run SGW Mock with SSL enabled in the `application.properties`.
 ```
 server.ssl.enabled=true
 ```
-**Note**: When SSL is enabled in SGW Mock, you can execute `run.py` by setting `SSL_ENABLED=True` in `config.py`.
+**Note**: When SSL is enabled in SGW Mock, you can also execute `run.py` by setting `SSL_ENABLED=True` in `config.py`.
 
 Run the test script from the `client_scripts` folder.
 ```shell
