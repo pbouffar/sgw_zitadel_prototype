@@ -1,6 +1,14 @@
 # config.py
 
-SGW_ZITADEL_DEMO_SERVER = "http://localhost:8090"
+SSL_ENABLED=False
+
+if SSL_ENABLED:
+    SGW_ZITADEL_DEMO_SERVER = "https://localhost:8090"
+    CLIENT_CERT_PATH = "client.crt"
+    CLIENT_KEY_PATH = "client.key"
+else:
+    SGW_ZITADEL_DEMO_SERVER = "http://localhost:8090"
+
 ZITADEL_SERVER = "http://localhost:8080"
 
 TOKEN_URL = f"{ZITADEL_SERVER}/oauth/v2/token"

@@ -1,9 +1,17 @@
 import requests
+import urllib3
 import json
 import sys
 import config
 from generate_jwt import generate_jwt_token
 
+# Suppress the InsecureRequestWarning that appears when verify=False is used
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+if config.SSL_ENABLED:
+    CERT=(config.CLIENT_CERT_PATH, config.CLIENT_KEY_PATH)
+else:
+    CERT=None
 
 def oauth_flow_jwt_access_token_with_client_credentials_authentication():
 
@@ -32,7 +40,10 @@ def oauth_flow_jwt_access_token_with_client_credentials_authentication():
             headers = {
                 "Authorization": f"Bearer {access_token}"
             }
-            secured_response = requests.get(config.SECURED_API, headers=headers)
+            secured_response = requests.get(config.SECURED_API, 
+                                            headers=headers, 
+                                            cert=CERT,
+                                            verify=False)
             secured_response.raise_for_status()
             print(f"Secured endpoint response: {secured_response.text}")
 
@@ -74,7 +85,10 @@ def oauth_flow_opaque_access_token_with_client_credentials_authentication():
             headers = {
                 "Authorization": f"Bearer {access_token}"
             }
-            secured_response = requests.get(config.SECURED_API, headers=headers)
+            secured_response = requests.get(config.SECURED_API, 
+                                            headers=headers, 
+                                            cert=CERT,
+                                            verify=False)
             secured_response.raise_for_status()
             print(f"Secured endpoint response: {secured_response.text}")
 
@@ -130,7 +144,10 @@ def oauth_flow_jwt_access_token_with_private_key_jwt_authentication():
                 "Authorization": f"Bearer {access_token}"
             }
             # Make the GET request to the secured endpoint
-            secured_response = requests.get(config.SECURED_API, headers=auth_headers)
+            secured_response = requests.get(config.SECURED_API, 
+                                            headers=auth_headers, 
+                                            cert=CERT,
+                                            verify=False)
             secured_response.raise_for_status()
             print(f"Secured endpoint response: {secured_response.text}")
 
@@ -187,7 +204,10 @@ def oauth_flow_opaque_access_token_with_private_key_jwt_authentication():
                 "Authorization": f"Bearer {access_token}"
             }
             # Make the GET request to the secured endpoint
-            secured_response = requests.get(config.SECURED_API, headers=auth_headers)
+            secured_response = requests.get(config.SECURED_API, 
+                                            headers=auth_headers, 
+                                            cert=CERT,
+                                            verify=False)
             secured_response.raise_for_status()
             print(f"Secured endpoint response: {secured_response.text}")
 
@@ -229,7 +249,10 @@ def oauth_flow_sgw_southbound_api_access():
             headers = {
                 "Authorization": f"Bearer {access_token}"
             }
-            secured_response = requests.get(config.DOWNSTREAM_API, headers=headers)
+            secured_response = requests.get(config.DOWNSTREAM_API, 
+                                            headers=headers, 
+                                            cert=CERT,
+                                            verify=False)
             secured_response.raise_for_status()
             print(f"Secured endpoint response: {secured_response.text}")
 
@@ -248,7 +271,9 @@ def access_public_api():
     # Access a public endpoint
     print(f"\nAccessing a public endpoint: {config.PUBLIC_API}")
     try:
-        public_response = requests.get(config.PUBLIC_API)
+        public_response = requests.get(config.PUBLIC_API,
+                                       cert=CERT,
+                                       verify=False)
         public_response.raise_for_status()
         print(f"Public endpoint response: {public_response.text}")
     except requests.exceptions.RequestException as e:

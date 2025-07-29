@@ -1,6 +1,8 @@
 package com.cisco.sgw_zitadel_demo;
 
 import jakarta.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,6 +41,9 @@ import org.slf4j.LoggerFactory;
 public class SecurityConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+
+    @Value("${server.ssl.enabled}")
+    private boolean sslEnabled;
 
     // Inject your custom authentication provider
     private final HybridTokenAuthenticationProvider hybridTokenAuthenticationProvider;
@@ -84,18 +89,24 @@ public class SecurityConfig {
                 .requestMatchers("/public/**").permitAll() // Allow public access to /public endpoints
                 .anyRequest().authenticated() // All other requests require authentication
             )
-            // Add X.509 authentication support
-            .x509(x509 -> x509
-                // Extract Common Name (CN) from the certificate's subject DN as the username
-                .subjectPrincipalRegex("CN=(.*?)(?:,.*|$)")
-                //.subjectPrincipalRegex("CN=(.*?),")
-                // Provide a UserDetailsService to load user details based on the extracted username
-                .userDetailsService(userDetailsService())
-            )
             // Configure oauth2ResourceServer to use your custom AuthenticationManagerResolver.
             // DO NOT call .jwt() or .opaqueToken() here, as the resolver takes precedence.
             .oauth2ResourceServer(oauth2 -> oauth2.authenticationManagerResolver(bearerTokenAuthenticationManagerResolver()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+            //.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
+
+        if(sslEnabled) {
+            logger.info("SSL enabled.");
+            http
+                // Add X.509 authentication support
+                .x509(x509 -> x509
+                    // Extract Common Name (CN) from the certificate's subject DN as the username
+                    .subjectPrincipalRegex("CN=(.*?)(?:,.*|$)")
+                    //.subjectPrincipalRegex("CN=(.*?),")
+                    // Provide a UserDetailsService to load user details based on the extracted username
+                    .userDetailsService(userDetailsService())
+                );
+        }
         System.out.println(">>> SecurityConfig: SecurityFilterChain bean created.");
         return http.build();
     }

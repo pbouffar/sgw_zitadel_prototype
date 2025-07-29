@@ -511,30 +511,23 @@ SGW Mock will then:
 
 ### Client Application > SGW Mock API: Using X.509 Authentication.
 
-Run this script (only once) from the ./tools directory.
+Run this script (only once) from the `tools` directory.
 ```
 cd tools
 ./setup_x509.sh
 ```
 
-Build and run SGW Mock with the following values in the `application.properties`.
+Build and run SGW Mock with SSL enabled in the `application.properties`.
 ```
-server.port=8443
 server.ssl.enabled=true
-server.ssl.key-store=classpath:certs/server.p12
-server.ssl.key-store-password=changeit
-server.ssl.key-store-type=PKCS12
-server.ssl.key-alias=springboot
-server.ssl.trust-store=classpath:certs/truststore.jks
-server.ssl.trust-store-password=changeit
-server.ssl.trust-store-type=JKS
-server.ssl.client-auth=need
 ```
+**Note**: When SSL is enabled in SGW Mock, you can execute `run.py` by setting `SSL_ENABLED=True` in `config.py`.
 
-Run the test script from the `./client_scripts` folder.
+Run the test script from the `client_scripts` folder.
 ```shell
-cd ./client_scripts
+cd client_scripts
 
 ./sgw_client_x509.sh
 Hello, testuser! (Authenticated via X.509). All authorities: [ROLE_USER]   
 ```
+

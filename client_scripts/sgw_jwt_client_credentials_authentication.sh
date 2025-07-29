@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SGW_ZITADEL_DEMO_SERVER="http://localhost:8090"
+SGW_ZITADEL_DEMO_SERVER="https://localhost:8090"
 ZITADEL_SERVER="http://localhost:8080"
 
 CLIENT_ID="sgw_client_app"
@@ -21,13 +21,13 @@ ACCESS_TOKEN=$(echo "$RESPONSE" | jq -r '.access_token')
 
 echo ""; echo "Accessing a secured endpoint...."
 
-RESPONSE=$(curl -sS -X GET "${SGW_ZITADEL_DEMO_SERVER}/secured" \
+RESPONSE=$(curl -sS --cert client.crt --key client.key --cacert ca.crt -X GET "${SGW_ZITADEL_DEMO_SERVER}/secured" \
      -H "Authorization: Bearer $ACCESS_TOKEN")
 
 echo $RESPONSE
 
 echo ""; echo "Accessing a public endpoint...."
 
-RESPONSE=$(curl -sS -X GET "${SGW_ZITADEL_DEMO_SERVER}/public/hello")
+RESPONSE=$(curl -sS --cert client.crt --key client.key --cacert ca.crt -X GET "${SGW_ZITADEL_DEMO_SERVER}/public/hello")
 
 echo $RESPONSE

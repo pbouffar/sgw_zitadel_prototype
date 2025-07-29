@@ -9,4 +9,4 @@
 #                    Replace /some-authenticated-endpoint with an actual endpoint that requires 
 #                    authentication (e.g., anything not /public/**).
 
-curl --cert client.crt --key client.key --cacert ca.crt https://localhost:8443/secured
+curl --cert client.crt --key client.key --cacert ca.crt https://localhost:8090/secured
