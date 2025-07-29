@@ -70,10 +70,10 @@ cp ./truststore.jks ../sgw-zitadel-demo/src/main/resources/certs/
 
 # Delete generated files.
 echo "Cleaning up..."
-#rm ./ca.*
-#rm ./client.*
-#rm ./server.*
-#rm ./truststore.jks
+rm ./ca.*
+rm ./client.*
+rm ./server.*
+rm ./truststore.jks
 
 # DONE
 echo "Done."
